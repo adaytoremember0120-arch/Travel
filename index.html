@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -471,15 +470,15 @@
     <div class="container">
         <!-- 目的地選択画面 -->
         <div id="destinationSelector" class="destination-selector">
-            <h1>✈️ 旅行先を選んでください</h1>
+            <h1>✈️ SELECT DESTINATION</h1>
             <div class="destination-buttons">
                 <button class="destination-btn bali" onclick="selectDestination('bali')">
                     <div class="destination-icon">🌴</div>
-                    <div>バリ島</div>
+                    <div>BALI</div>
                 </button>
                 <button class="destination-btn hokkaido" onclick="selectDestination('hokkaido')">
                     <div class="destination-icon">⛷️</div>
-                    <div>北海道</div>
+                    <div>HOKKAIDO</div>
                 </button>
             </div>
         </div>
@@ -488,13 +487,13 @@
         <div id="baliContent" class="hidden">
             <div class="header">
                 <button class="back-btn" onclick="backToSelector()">← 戻る</button>
-                <h1>🌴 バリ旅行チェックリスト</h1>
+                <h1>🌴 THE LIST</h1>
                 <p>準備を完璧に!楽しい旅行にしましょう✈️</p>
             </div>
 
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('bali', 'ticket')">チケット情報</button>
-                <button class="tab" onclick="switchTab('bali', 'checklist')">チェックリスト</button>
+                <button class="tab" onclick="switchTab('bali', 'checklist')">THE LIST</button>
                 <button class="tab" onclick="switchTab('bali', 'info')">参考情報</button>
             </div>
 
@@ -643,49 +642,6 @@
 
                     <div class="category">
                         <div class="category-title">
-                            <span class="category-icon">💄</span>
-                            美容・衛生用品
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">化粧落とし</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">化粧水</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">美容液</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">日焼け止め</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">日焼け止め下地</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">シャンプー・コンディショナー</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">せっけん</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">パック</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('bali')">
-                            <span class="item-text">タオル</span>
-                        </div>
-                    </div>
-
-                    <div class="category">
-                        <div class="category-title">
                             <span class="category-icon">💊</span>
                             医薬品・サプリ
                         </div>
@@ -797,6 +753,49 @@
                         <div class="checklist-item">
                             <input type="checkbox" onchange="updateProgress('bali')">
                             <span class="item-text">お金(現金)</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">💄</span>
+                            美容・衛生用品
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">化粧落とし</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">化粧水</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">美容液</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">日焼け止め</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">日焼け止め下地</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">シャンプー・コンディショナー</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">せっけん</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">パック</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">タオル</span>
                         </div>
                     </div>
 
@@ -920,14 +919,14 @@
         <div id="hokkaidoContent" class="hidden">
             <div class="header hokkaido">
                 <button class="back-btn" onclick="backToSelector()">← 戻る</button>
-                <h1>⛷️ 北海道旅行チェックリスト</h1>
+                <h1>⛷️ THE LIST</h1>
                 <p>スノボ準備万端で!楽しい旅行にしましょう✈️</p>
             </div>
 
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('hokkaido', 'ticket')">フライト情報</button>
                 <button class="tab" onclick="switchTab('hokkaido', 'links')">リンク・配送</button>
-                <button class="tab" onclick="switchTab('hokkaido', 'checklist')">チェックリスト</button>
+                <button class="tab" onclick="switchTab('hokkaido', 'checklist')">THE LIST</button>
                 <button class="tab" onclick="switchTab('hokkaido', 'info')">参考情報</button>
             </div>
 
@@ -1168,6 +1167,37 @@
 
                     <div class="category">
                         <div class="category-title">
+                            <span class="category-icon">✈️</span>
+                            機内持ち込み
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">座席用フリース(寒い)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">リップ(飛行機忘れずに)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">アイマスク</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">イヤホン</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">ペン</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">マスク</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
                             <span class="category-icon">💄</span>
                             美容・衛生用品
                         </div>
@@ -1214,37 +1244,6 @@
                         <div class="checklist-item">
                             <input type="checkbox" onchange="updateProgress('hokkaido')">
                             <span class="item-text">眉毛</span>
-                        </div>
-                    </div>
-
-                    <div class="category">
-                        <div class="category-title">
-                            <span class="category-icon">✈️</span>
-                            機内持ち込み
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('hokkaido')">
-                            <span class="item-text">座席用フリース(寒い)</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('hokkaido')">
-                            <span class="item-text">リップ(飛行機忘れずに)</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('hokkaido')">
-                            <span class="item-text">アイマスク</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('hokkaido')">
-                            <span class="item-text">イヤホン</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('hokkaido')">
-                            <span class="item-text">ペン</span>
-                        </div>
-                        <div class="checklist-item">
-                            <input type="checkbox" onchange="updateProgress('hokkaido')">
-                            <span class="item-text">マスク</span>
                         </div>
                     </div>
 
