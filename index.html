@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅行チェックリスト</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic Pro', 'Meiryo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .destination-selector {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .destination-selector h1 {
+            font-size: 28px;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+
+        .destination-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .destination-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 30px;
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .destination-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .destination-btn.bali {
+            border-color: #f5576c;
+            color: #f5576c;
+        }
+
+        .destination-btn.bali:hover {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .destination-btn.hokkaido {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .destination-btn.hokkaido:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .destination-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header.hokkaido {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .content {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .ticket-info {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            color: #2d3748;
+        }
+
+        .ticket-info h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .info-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .info-item strong {
+            display: inline-block;
+            width: 120px;
+            color: #2d3748;
+        }
+
+        .info-link {
+            color: #667eea;
+            text-decoration: none;
+            word-break: break-all;
+            display: block;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        .info-link:hover {
+            text-decoration: underline;
+        }
+
+        .category {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-icon {
+            font-size: 22px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .checklist-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .checklist-item.checked {
+            background: #d4edda;
+            opacity: 0.7;
+        }
+
+        .checklist-item.checked .item-text {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .item-text {
+            flex: 1;
+            font-size: 15px;
+            color: #2d3748;
+        }
+
+        .item-note {
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .add-note-btn {
+            padding: 4px 10px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #495057;
+            margin-left: 10px;
+        }
+
+        .add-note-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .note-input {
+            width: 100%;
+            margin-top: 8px;
+            padding: 6px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .note-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .clear-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .clear-btn:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+        }
+
+        .clear-section {
+            text-align: center;
+            padding: 20px;
+            border-top: 2px solid #e9ecef;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 30px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .notes-section {
+            margin-top: 30px;
+        }
+
+        .note-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .note-title {
+            font-weight: 700;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .note-content {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .contact-list {
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .contact-name {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 3px;
+        }
+
+        .contact-detail {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .budget-section {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(255,255,255,0.7);
+            margin: 8px 0;
+            border-radius: 8px;
+        }
+
+        .budget-label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .budget-amount {
+            color: #e53e3e;
+            font-weight: 700;
+        }
+
+        .editable-input {
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            width: 100%;
+            max-width: 300px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .editable-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .editable-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .flight-section {
+            margin-bottom: 15px;
+        }
+
+        .flight-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 目的地選択画面 -->
+        <div id="destinationSelector" class="destination-selector">
+            <h1>✈️ 旅行先を選んでください</h1>
+            <div class="destination-buttons">
+                <button class="destination-btn bali" onclick="selectDestination('bali')">
+                    <div class="destination-icon">🌴</div>
+                    <div>バリ島</div>
+                </button>
+                <button class="destination-btn hokkaido" onclick="selectDestination('hokkaido')">
+                    <div class="destination-icon">⛷️</div>
+                    <div>北海道</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- バリ島チェックリスト -->
+        <div id="baliContent" class="hidden">
+            <div class="header">
+                <button class="back-btn" onclick="backToSelector()">← 戻る</button>
+                <h1>🌴 バリ旅行チェックリスト</h1>
+                <p>準備を完璧に!楽しい旅行にしましょう✈️</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('bali', 'ticket')">チケット情報</button>
+                <button class="tab" onclick="switchTab('bali', 'checklist')">チェックリスト</button>
+                <button class="tab" onclick="switchTab('bali', 'info')">参考情報</button>
+            </div>
+
+            <div class="content">
+                <!-- バリ:チケット情報タブ -->
+                <div id="bali-ticket" class="tab-content active">
+                    <div class="ticket-info">
+                        <h3>✈️ フライト情報</h3>
+                        
+                        <div class="flight-section">
+                            <div class="flight-section-title">往路(行き)</div>
+                            <div class="info-item">
+                                <strong>便名:</strong> <input type="text" id="bali-flight-outbound" class="editable-input" placeholder="便名を入力">
+                            </div>
+                            <div class="info-item">
+                                <strong>ボーディング:</strong> <input type="text" id="bali-boarding-outbound" class="editable-input" placeholder="例: 17:10">
+                            </div>
+                        </div>
+
+                        <div class="flight-section">
+                            <div class="flight-section-title">復路(帰り)</div>
+                            <div class="info-item">
+                                <strong>便名:</strong> <input type="text" id="bali-flight-return" class="editable-input" placeholder="便名を入力">
+                            </div>
+                            <div class="info-item">
+                                <strong>ボーディング:</strong> <input type="text" id="bali-boarding-return" class="editable-input" placeholder="例: 14:30">
+                            </div>
+                            <div class="info-item">
+                                <strong>出発時刻:</strong> ボーディング1時間半前にくみさんの家を出発
+                            </div>
+                        </div>
+
+                        <div class="info-item">
+                            <strong>到着目安:</strong> ボーディングの1時間前
+                        </div>
+                    </div>
+
+                    <div class="ticket-info">
+                        <h3>🏨 宿泊情報</h3>
+                        <div class="info-item">
+                            <strong>ホテル名:</strong> KUPUKUPU39
+                        </div>
+                        <div class="info-item">
+                            <strong>住所:</strong> Jl wana segara gg handayani NO11 kuta bali 80361<br>
+                            KAB. BADUNG
+                        </div>
+                        <div class="info-item">
+                            <strong>料金:</strong> 2,500円/泊
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <div class="note-title">⏰ 重要な時間</div>
+                        <div class="note-content">
+                            ボーディングタイムにガーガー言い出すので、余裕を持って行動しましょう!
+                        </div>
+                    </div>
+
+                    <div class="clear-section">
+                        <button class="clear-btn" onclick="clearBaliTicketInfo()">🗑️ フライト情報をクリア</button>
+                    </div>
+                </div>
+
+                <!-- バリ:チェックリストタブ -->
+                <div id="bali-checklist" class="tab-content">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="bali-progressBar">0%</div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">📝</span>
+                            予約・手続き
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')" data-index="0">
+                            <div style="flex: 1;">
+                                <div class="item-text">KupuKupu予約</div>
+                                <div class="item-note" data-note-index="0" style="display: none;"></div>
+                            </div>
+                            <button class="add-note-btn" onclick="toggleNoteInput('bali', 0, this)">📝</button>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')" data-index="1">
+                            <div style="flex: 1;">
+                                <div class="item-text">こみん予約</div>
+                                <div class="item-note" data-note-index="1" style="display: none;"></div>
+                            </div>
+                            <button class="add-note-btn" onclick="toggleNoteInput('bali', 1, this)">📝</button>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">🏄</span>
+                            サーフィン用品
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">後ろジップのタッパー</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">水着×2</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">フィンのネジ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">防水バッグ</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">👕</span>
+                            衣類
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">ワンピース</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">緑のキャミ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">帰る日の服・下着</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">パジャマパンツ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">薄いパーカー、もしくはシャカシャカ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">スリッパ</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">💄</span>
+                            美容・衛生用品
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">化粧落とし</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">化粧水</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">美容液</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">日焼け止め</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">日焼け止め下地</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">シャンプー・コンディショナー</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">せっけん</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">パック</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">タオル</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">💊</span>
+                            医薬品・サプリ
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">目薬</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">BCAA 日焼け止めサプリ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">蚊よけ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">かゆみ止め</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">部屋用の蚊除けスプレー</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">ウェッティ</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">🎒</span>
+                            持ち物・小物
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">帽子</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">グラサン(サングラス)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">Wise card</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">水筒</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">アダプター</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">ピーナッツボール</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">タバコ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">耳栓</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">海行きのバッグ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">街行きのトートバッグ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">宿用ゴミ袋</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">洗剤(ロンボクの場合)</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">✈️</span>
+                            機内持ち込み
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">イヤホン(機内うるさい)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">Musk</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">📄</span>
+                            必須書類
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">パスポート</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">お金(現金)</span>
+                        </div>
+                    </div>
+
+                    <div class="clear-section">
+                        <button class="clear-btn" onclick="clearBaliChecklist()">🗑️ チェックリストを全てクリア</button>
+                    </div>
+                </div>
+
+                <!-- バリ:参考情報タブ -->
+                <div id="bali-info" class="tab-content">
+                    <div class="budget-section">
+                        <h3 style="margin-bottom: 15px; color: #2d3748;">💰 予算目安</h3>
+                        <div class="budget-item">
+                            <span class="budget-label">船(1回)</span>
+                            <span class="budget-amount">3,000円</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">宿泊</span>
+                            <span class="budget-amount">2,500円/泊</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">アント船込みワンライド</span>
+                            <span class="budget-amount">4,500円</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">14ライド(3-4人)</span>
+                            <span class="budget-amount">26,000円</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">コミン(3人/1日1人)</span>
+                            <span class="budget-amount">65万ルピア</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">コミン土日(船込み)</span>
+                            <span class="budget-amount">110万ルピア</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-list">
+                        <h3 style="margin-bottom: 15px; color: #2d3748;">👥 連絡先リスト</h3>
+                        <div class="contact-item">
+                            <div class="contact-name">恵さん</div>
+                            <div class="contact-detail">WhatsApp: +62 819-9933-9559</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">まちゃどさん</div>
+                            <div class="contact-detail">たくしたかし - 家建てる</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">こうぞーちゃん</div>
+                            <div class="contact-detail">岡山宿</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">ユーマさん</div>
+                            <div class="contact-detail">三井物産</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">しげちゃん</div>
+                            <div class="contact-detail">パイロット</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">まさ</div>
+                            <div class="contact-detail">東大</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">けんじさん</div>
+                            <div class="contact-detail">ホンダジャカルタ</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">小原(おはら)さん</div>
+                            <div class="contact-detail">ホンダジャカルタ</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">渡辺さん</div>
+                            <div class="contact-detail">KL 建設</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">みほちゃん</div>
+                            <div class="contact-detail">コピー機</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">つよしさん</div>
+                            <div class="contact-detail">和歌山 - 建設</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-name">Lina</div>
+                            <div class="contact-detail">若い子</div>
+                        </div>
+                    </div>
+
+                    <div class="notes-section">
+                        <h3 style="margin-bottom: 15px; color: #2d3748;">👥 メンバー管理</h3>
+                        <div style="margin-bottom: 15px;">
+                            <input type="text" id="bali-member-name" class="editable-input" placeholder="名前" style="margin-bottom: 10px; max-width: 100%;">
+                            <input type="text" id="bali-member-info" class="editable-input" placeholder="情報" style="margin-bottom: 10px; max-width: 100%;">
+                            <button onclick="addMember('bali')" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">メンバー追加</button>
+                        </div>
+                        <div id="bali-custom-members"></div>
+                    </div>
+
+                    <div class="notes-section">
+                        <h3 style="margin-bottom: 15px; color: #2d3748;">📝 旅行の記録・メモ</h3>
+                        <div id="bali-comments-list"></div>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4 style="margin-bottom: 10px; color: #2d3748;">新しい記録を追加</h4>
+                            <input type="text" id="bali-comment-title" class="editable-input" placeholder="タイトル (例: 2024年12月の記録)" style="margin-bottom: 10px; max-width: 100%;">
+                            <textarea id="bali-comment-content" class="editable-input" placeholder="内容 (例: 波がデカかった、風が強かった、など)" style="margin-bottom: 10px; max-width: 100%; min-height: 100px; resize: vertical; font-family: inherit; padding: 8px 12px;"></textarea>
+                            <button onclick="addComment('bali')" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">記録を追加</button>
+                        </div>
+                    </div>
+
+                    <div class="clear-section">
+                        <button class="clear-btn" onclick="clearBaliInfo()">🗑️ 参考情報を全てクリア</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 北海道チェックリスト -->
+        <div id="hokkaidoContent" class="hidden">
+            <div class="header hokkaido">
+                <button class="back-btn" onclick="backToSelector()">← 戻る</button>
+                <h1>⛷️ 北海道旅行チェックリスト</h1>
+                <p>スノボ準備万端で!楽しい旅行にしましょう✈️</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('hokkaido', 'ticket')">フライト情報</button>
+                <button class="tab" onclick="switchTab('hokkaido', 'links')">リンク・配送</button>
+                <button class="tab" onclick="switchTab('hokkaido', 'checklist')">チェックリスト</button>
+                <button class="tab" onclick="switchTab('hokkaido', 'info')">参考情報</button>
+            </div>
+
+            <div class="content">
+                <!-- 北海道:フライト情報タブ -->
+                <div id="hokkaido-ticket" class="tab-content active">
+                    <div class="ticket-info">
+                        <h3>✈️ フライト情報</h3>
+                        
+                        <div class="flight-section">
+                            <div class="flight-section-title">往路(行き)</div>
+                            <div class="info-item">
+                                <strong>便名:</strong> <input type="text" id="hokkaido-flight-outbound" class="editable-input" placeholder="便名を入力">
+                            </div>
+                            <div class="info-item">
+                                <strong>ボーディング:</strong> <input type="text" id="hokkaido-boarding-outbound" class="editable-input" placeholder="例: 09:00">
+                            </div>
+                        </div>
+
+                        <div class="flight-section">
+                            <div class="flight-section-title">復路(帰り)</div>
+                            <div class="info-item">
+                                <strong>便名:</strong> <input type="text" id="hokkaido-flight-return" class="editable-input" placeholder="便名を入力">
+                            </div>
+                            <div class="info-item">
+                                <strong>ボーディング:</strong> <input type="text" id="hokkaido-boarding-return" class="editable-input" placeholder="例: 15:30">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <div class="note-title">⚠️ フライト注意事項</div>
+                        <div class="note-content">
+                            • Peachはダメ - 違うターミナルにつく<br>
+                            • 千歳発はLCCだめ<br>
+                            • ボーディングタイムの30分前で間に合う<br>
+                            • MK関空発も事前予約するべし<br>
+                            • 9:38 関空北到着口でドライバーが紙持って待ってた
+                        </div>
+                    </div>
+
+                    <div class="ticket-info">
+                        <h3>📮 送付先住所</h3>
+                        <div class="info-item">
+                            <strong>郵便番号:</strong> 〒044-0078
+                        </div>
+                        <div class="info-item">
+                            <strong>住所:</strong><br>
+                            北海道虻田郡倶知安町樺山106-27<br>
+                            森尻様気付　種子暁子宛
+                        </div>
+                        <div class="info-item">
+                            <strong>電話:</strong> 0136-25-4326
+                        </div>
+                    </div>
+
+                    <div class="clear-section">
+                        <button class="clear-btn" onclick="clearHokkaidoTicketInfo()">🗑️ フライト・住所情報をクリア</button>
+                    </div>
+                </div>
+
+                <!-- 北海道:リンク・配送タブ -->
+                <div id="hokkaido-links" class="tab-content">
+                    <div class="ticket-info">
+                        <h3>🚗 東日本レンタル</h3>
+                        <div class="info-item">
+                            <a href="https://rsv01.ej-rental.com/ejrrsv/login.bean?next=azukariList.bean%3FoldYoyakuBangou%3D1000025170" target="_blank" class="info-link" style="display: inline;">
+                                東日本レンタル予約確認ページ →
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="ticket-info">
+                        <h3>📦 クロネコヤマト配送追跡</h3>
+                        <div class="info-item">
+                            <strong>追跡番号1:</strong>
+                            <input type="text" id="yamato-tracking-1" class="editable-input" placeholder="追跡番号を入力" style="margin-bottom: 10px;">
+                        </div>
+                        <div class="info-item" id="tracking-link-display-1" style="display: none;">
+                            <a id="tracking-link-1" href="#" target="_blank" class="info-link" style="display: inline;">
+                                📦 荷物1の追跡ページを開く →
+                            </a>
+                        </div>
+                        
+                        <div class="info-item" style="margin-top: 15px;">
+                            <strong>追跡番号2:</strong>
+                            <input type="text" id="yamato-tracking-2" class="editable-input" placeholder="追跡番号を入力" style="margin-bottom: 10px;">
+                        </div>
+                        <div class="info-item" id="tracking-link-display-2" style="display: none;">
+                            <a id="tracking-link-2" href="#" target="_blank" class="info-link" style="display: inline;">
+                                📦 荷物2の追跡ページを開く →
+                            </a>
+                        </div>
+
+                        <div class="info-item" style="margin-top: 15px;">
+                            <a href="https://auth.kms.kuronekoyamato.co.jp/auth/login" target="_blank" class="info-link" style="display: inline;">
+                                クロネコヤマト ログイン →
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <div class="note-title">💡 使い方</div>
+                        <div class="note-content">
+                            追跡番号を入力すると、荷物の配送状況を確認できるリンクが表示されます。
+                        </div>
+                    </div>
+
+                    <div class="clear-section">
+                        <button class="clear-btn" onclick="clearHokkaidoLinks()">🗑️ 追跡番号をクリア</button>
+                    </div>
+                </div>
+
+                <!-- 北海道:チェックリストタブ -->
+                <div id="hokkaido-checklist" class="tab-content">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="hokkaido-progressBar">0%</div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">🏂</span>
+                            スノボ用品
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">スノーボード日本(お土産8)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">Jpスノボウェア</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">膝パッド(新しいの買う)</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">🧥</span>
+                            アウター類
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">パタゴニアパーカー(明るい色ほしい)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">フリース</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">ダウン</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">パタフリースパンツ</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">👕</span>
+                            衣類
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">チェックのネルシャツ(新しいやつ)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">Tシャツ2-3枚(洗濯できる)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">下着4セット</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">Jpねまき黒パンツ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">Jpナイキスウェット</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">⛷️</span>
+                            雪山用
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">コンタクト</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">小さい財布</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">🥾</span>
+                            山用
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">ボルパンツ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">ボルTシャツ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">山用フリース(絶対必要)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">山用長袖</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">アプローチ用スニーカー</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">クロックス</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">靴下</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">💄</span>
+                            美容・衛生用品
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">YA-MAN</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">アイロン</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">化粧落とし</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">日焼け止め</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">化粧水</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">乳液</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">アイクリーム</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">リップ</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">シャンプー・コンディショナー</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">下地</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">眉毛</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
+                            <span class="category-icon">✈️</span>
+                            機内持ち込み
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">座席用フリース(寒い)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">リップ(飛行機忘れずに)</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">アイマスク</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">イヤホン</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">ペン</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">マスク</span>
+                        </div>
+                    </div>
+
+                    <div class="clear-section">
+                        <button class="clear-btn" onclick="clearHokkaidoChecklist()">🗑️ チェックリストを全てクリア</button>
+                    </div>
+                </div>
+
+                <!-- 北海道:参考情報タブ -->
+                <div id="hokkaido-info" class="tab-content">
+                    <div class="budget-section">
+                        <h3 style="margin-bottom: 15px; color: #2d3748;">💰 予算目安</h3>
+                        <div class="budget-item">
+                            <span class="budget-label">スノボ トータル</span>
+                            <span class="budget-amount">15万円</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">宿と車込み(1日)</span>
+                            <span class="budget-amount">1万円</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">全体</span>
+                            <span class="budget-amount">5万円</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">健ちゃん3日</span>
+                            <span class="budget-amount">38,000円</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">健ちゃん4日</span>
+                            <span class="budget-amount">5万円</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">写真3日(人多い)</span>
+                            <span class="budget-amount">4万円?</span>
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-label">ご飯毎日(おごってくれた)</span>
+                            <span class="budget-amount">約4,000円</span>
+                        </div>
+                    </div>
+
+                    <div class="notes-section">
+                        <h3 style="margin-bottom: 15px; color: #2d3748;">⚠️ 重要な注意事項</h3>
+                        <div id="hokkaido-notes-list">
+                            <div class="note-box">
+                                <div class="note-title">❄️ 装備の注意</div>
+                                <div class="note-content">
+                                    • 紫のほうがあったかい。-16度とかになると2枚重ねるべし<br>
+                                    • 首あったか布は不要。寒い時は母のマフラー巻いていく<br>
+                                    • 上のプロテクターは不要<br>
+                                    • 膝パッドあれば新しいの買って<br>
+                                    • ニセコ行く時はヒートテック中に着ていっちゃダメ。暑い
+                                </div>
+                            </div>
+                            <div class="note-box">
+                                <div class="note-title">📝 出発前ToDo</div>
+                                <div class="note-content">
+                                    スクワットを一週間やっといて!
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4 style="margin-bottom: 10px; color: #2d3748;">新しい注意事項を追加</h4>
+                            <input type="text" id="hokkaido-note-title" class="editable-input" placeholder="タイトル" style="margin-bottom: 10px; max-width: 100%;">
+                            <textarea id="hokkaido-note-content" class="editable-input" placeholder="内容" style="margin-bottom: 10px; max-width: 100%; min-height: 80px; resize: vertical; font-family: inherit; padding: 8px 12px;"></textarea>
+                            <button onclick="addNote('hokkaido')" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">注意事項追加</button>
+                        </div>
+                    </div>
+
+                    <div class="notes-section" style="margin-top: 30px;">
+                        <h3 style="margin-bottom: 15px; color: #2d3748;">📝 旅行の記録・メモ</h3>
+                        <div id="hokkaido-comments-list"></div>
+                        
+                        <div style="margin-top: 20px;">
+                            <h4 style="margin-bottom: 10px; color: #2d3748;">新しい記録を追加</h4>
+                            <input type="text" id="hokkaido-comment-title" class="editable-input" placeholder="タイトル (例: 2025年2月の記録)" style="margin-bottom: 10px; max-width: 100%;">
+                            <textarea id="hokkaido-comment-content" class="editable-input" placeholder="内容 (例: -16度で寒かった、雪質が最高だった、など)" style="margin-bottom: 10px; max-width: 100%; min-height: 100px; resize: vertical; font-family: inherit; padding: 8px 12px;"></textarea>
+                            <button onclick="addComment('hokkaido')" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">記録を追加</button>
+                        </div>
+                    </div>
+
+                    <div class="clear-section">
+                        <button class="clear-btn" onclick="clearHokkaidoInfo()">🗑️ 参考情報を全てクリア</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDestination = null;
+
+        function addMember(destination) {
+            const nameInput = document.getElementById(`${destination}-member-name`);
+            const infoInput = document.getElementById(`${destination}-member-info`);
+            const name = nameInput.value.trim();
+            const info = infoInput.value.trim();
+            
+            if (!name) {
+                alert('名前を入力してください');
+                return;
+            }
+            
+            const members = JSON.parse(localStorage.getItem(`${destination}CustomMembers`) || '[]');
+            members.push({ name, info });
+            localStorage.setItem(`${destination}CustomMembers`, JSON.stringify(members));
+            
+            nameInput.value = '';
+            infoInput.value = '';
+            
+            displayCustomMembers(destination);
+        }
+
+        function removeMember(destination, index) {
+            const members = JSON.parse(localStorage.getItem(`${destination}CustomMembers`) || '[]');
+            members.splice(index, 1);
+            localStorage.setItem(`${destination}CustomMembers`, JSON.stringify(members));
+            displayCustomMembers(destination);
+        }
+
+        function displayCustomMembers(destination) {
+            const container = document.getElementById(`${destination}-custom-members`);
+            const members = JSON.parse(localStorage.getItem(`${destination}CustomMembers`) || '[]');
+            
+            container.innerHTML = members.map((member, index) => `
+                <div class="contact-item" style="position: relative; padding-right: 50px;">
+                    <div class="contact-name">${member.name}</div>
+                    <div class="contact-detail">${member.info || ''}</div>
+                    <button onclick="removeMember('${destination}', ${index})" style="position: absolute; right: 10px; top: 10px; background: #e53e3e; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">削除</button>
+                </div>
+            `).join('');
+        }
+
+        function updateTrackingLink() {
+            [1, 2].forEach(num => {
+                const trackingNumber = document.getElementById(`yamato-tracking-${num}`).value.trim();
+                const linkDisplay = document.getElementById(`tracking-link-display-${num}`);
+                const trackingLink = document.getElementById(`tracking-link-${num}`);
+                
+                if (trackingNumber) {
+                    trackingLink.href = `https://toi.kuronekoyamato.co.jp/cgi-bin/tneko?number=${trackingNumber}`;
+                    linkDisplay.style.display = 'block';
+                    localStorage.setItem(`yamatoTracking${num}`, trackingNumber);
+                } else {
+                    linkDisplay.style.display = 'none';
+                }
+            });
+        }
+
+        function loadTrackingNumber() {
+            // 追跡番号は常にブランクで開始
+            // ユーザーが手動で入力する
+        }
+
+        function addNote(destination) {
+            const titleInput = document.getElementById(`${destination}-note-title`);
+            const contentInput = document.getElementById(`${destination}-note-content`);
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+            
+            if (!title || !content) {
+                alert('タイトルと内容を入力してください');
+                return;
+            }
+            
+            const notes = JSON.parse(localStorage.getItem(`${destination}CustomNotes`) || '[]');
+            notes.push({ title, content });
+            localStorage.setItem(`${destination}CustomNotes`, JSON.stringify(notes));
+            
+            titleInput.value = '';
+            contentInput.value = '';
+            
+            displayCustomNotes(destination);
+        }
+
+        function removeNote(destination, index) {
+            const notes = JSON.parse(localStorage.getItem(`${destination}CustomNotes`) || '[]');
+            notes.splice(index, 1);
+            localStorage.setItem(`${destination}CustomNotes`, JSON.stringify(notes));
+            displayCustomNotes(destination);
+        }
+
+        function displayCustomNotes(destination) {
+            const container = document.getElementById(`${destination}-notes-list`);
+            const notes = JSON.parse(localStorage.getItem(`${destination}CustomNotes`) || '[]');
+            
+            const existingNotes = container.innerHTML;
+            const customNotesHtml = notes.map((note, index) => `
+                <div class="note-box" style="position: relative; padding-right: 50px;">
+                    <div class="note-title">${note.title}</div>
+                    <div class="note-content">${note.content.replace(/\n/g, '<br>')}</div>
+                    <button onclick="removeNote('${destination}', ${index})" style="position: absolute; right: 10px; top: 10px; background: #e53e3e; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">削除</button>
+                </div>
+            `).join('');
+            
+            container.innerHTML = existingNotes.split('<div class="note-box" style="position: relative;')[0] + customNotesHtml;
+        }
+
+        function addComment(destination) {
+            const titleInput = document.getElementById(`${destination}-comment-title`);
+            const contentInput = document.getElementById(`${destination}-comment-content`);
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+            
+            if (!title || !content) {
+                alert('タイトルと内容を入力してください');
+                return;
+            }
+            
+            const comments = JSON.parse(localStorage.getItem(`${destination}Comments`) || '[]');
+            const date = new Date().toLocaleDateString('ja-JP');
+            comments.push({ title, content, date });
+            localStorage.setItem(`${destination}Comments`, JSON.stringify(comments));
+            
+            titleInput.value = '';
+            contentInput.value = '';
+            
+            displayComments(destination);
+        }
+
+        function removeComment(destination, index) {
+            const comments = JSON.parse(localStorage.getItem(`${destination}Comments`) || '[]');
+            comments.splice(index, 1);
+            localStorage.setItem(`${destination}Comments`, JSON.stringify(comments));
+            displayComments(destination);
+        }
+
+        function displayComments(destination) {
+            const container = document.getElementById(`${destination}-comments-list`);
+            const comments = JSON.parse(localStorage.getItem(`${destination}Comments`) || '[]');
+            
+            if (comments.length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; font-style: italic;">まだ記録がありません</p>';
+                return;
+            }
+            
+            container.innerHTML = comments.map((comment, index) => `
+                <div class="note-box" style="position: relative; padding-right: 50px; background: #e6f3ff; border-left-color: #667eea;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div class="note-title" style="color: #2d3748;">${comment.title}</div>
+                        <div style="font-size: 12px; color: #6c757d;">${comment.date}</div>
+                    </div>
+                    <div class="note-content" style="color: #2d3748;">${comment.content.replace(/\n/g, '<br>')}</div>
+                    <button onclick="removeComment('${destination}', ${index})" style="position: absolute; right: 10px; top: 10px; background: #e53e3e; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px;">削除</button>
+                </div>
+            `).join('');
+        }
+
+        function toggleNoteInput(destination, index, button) {
+            const noteDisplay = document.querySelector(`#${destination}-checklist [data-note-index="${index}"]`);
+            const existingInput = button.parentElement.querySelector('.note-input');
+            
+            if (existingInput) {
+                existingInput.remove();
+                return;
+            }
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'note-input';
+            input.placeholder = 'メモを入力...';
+            input.value = noteDisplay.textContent || '';
+            
+            input.addEventListener('blur', function() {
+                saveItemNote(destination, index, this.value);
+                this.remove();
+            });
+            
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    saveItemNote(destination, index, this.value);
+                    this.remove();
+                }
+            });
+            
+            button.parentElement.appendChild(input);
+            input.focus();
+        }
+
+        function saveItemNote(destination, index, noteText) {
+            const notes = JSON.parse(localStorage.getItem(`${destination}ItemNotes`) || '{}');
+            notes[index] = noteText;
+            localStorage.setItem(`${destination}ItemNotes`, JSON.stringify(notes));
+            
+            const noteDisplay = document.querySelector(`#${destination}-checklist [data-note-index="${index}"]`);
+            if (noteText.trim()) {
+                noteDisplay.textContent = noteText;
+                noteDisplay.style.display = 'block';
+            } else {
+                noteDisplay.style.display = 'none';
+            }
+        }
+
+        function loadItemNotes(destination) {
+            const notes = JSON.parse(localStorage.getItem(`${destination}ItemNotes`) || '{}');
+            Object.keys(notes).forEach(index => {
+                const noteDisplay = document.querySelector(`#${destination}-checklist [data-note-index="${index}"]`);
+                if (noteDisplay && notes[index]) {
+                    noteDisplay.textContent = notes[index];
+                    noteDisplay.style.display = 'block';
+                }
+            });
+        }
+
+        function clearBaliTicketInfo() {
+            if (confirm('フライト情報をクリアしますか?')) {
+                ['bali-flight-outbound', 'bali-boarding-outbound', 'bali-flight-return', 'bali-boarding-return'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                localStorage.removeItem('baliFlightOutbound');
+                localStorage.removeItem('baliBoardingOutbound');
+                localStorage.removeItem('baliFlightReturn');
+                localStorage.removeItem('baliBoardingReturn');
+            }
+        }
+
+        function clearBaliChecklist() {
+            if (confirm('チェックリストを全てクリアしますか?')) {
+                document.querySelectorAll('#bali-checklist input[type="checkbox"]').forEach(cb => cb.checked = false);
+                localStorage.removeItem('baliChecklistState');
+                localStorage.removeItem('baliItemNotes');
+                document.querySelectorAll('#bali-checklist .item-note').forEach(note => {
+                    note.textContent = '';
+                    note.style.display = 'none';
+                });
+                updateProgress('bali');
+            }
+        }
+
+        function clearBaliInfo() {
+            if (confirm('メンバー情報と旅行記録を全てクリアしますか?')) {
+                localStorage.removeItem('baliCustomMembers');
+                localStorage.removeItem('baliComments');
+                displayCustomMembers('bali');
+                displayComments('bali');
+            }
+        }
+
+        function clearHokkaidoTicketInfo() {
+            if (confirm('フライト・住所情報をクリアしますか?')) {
+                ['hokkaido-flight-outbound', 'hokkaido-boarding-outbound', 'hokkaido-flight-return', 'hokkaido-boarding-return'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                localStorage.removeItem('hokkaidoFlightOutbound');
+                localStorage.removeItem('hokkaidoBoardingOutbound');
+                localStorage.removeItem('hokkaidoFlightReturn');
+                localStorage.removeItem('hokkaidoBoardingReturn');
+            }
+        }
+
+        function clearHokkaidoLinks() {
+            if (confirm('追跡番号をクリアしますか?')) {
+                document.getElementById('yamato-tracking-1').value = '';
+                document.getElementById('yamato-tracking-2').value = '';
+                localStorage.removeItem('yamatoTracking1');
+                localStorage.removeItem('yamatoTracking2');
+                document.getElementById('tracking-link-display-1').style.display = 'none';
+                document.getElementById('tracking-link-display-2').style.display = 'none';
+            }
+        }
+
+        function clearHokkaidoChecklist() {
+            if (confirm('チェックリストを全てクリアしますか?')) {
+                document.querySelectorAll('#hokkaido-checklist input[type="checkbox"]').forEach(cb => cb.checked = false);
+                localStorage.removeItem('hokkaidoChecklistState');
+                localStorage.removeItem('hokkaidoItemNotes');
+                document.querySelectorAll('#hokkaido-checklist .item-note').forEach(note => {
+                    note.textContent = '';
+                    note.style.display = 'none';
+                });
+                updateProgress('hokkaido');
+            }
+        }
+
+        function clearHokkaidoInfo() {
+            if (confirm('カスタム注意事項と旅行記録を全てクリアしますか?')) {
+                localStorage.removeItem('hokkaidoCustomNotes');
+                localStorage.removeItem('hokkaidoComments');
+                displayCustomNotes('hokkaido');
+                displayComments('hokkaido');
+            }
+        }
+
+        function selectDestination(destination) {
+            currentDestination = destination;
+            document.getElementById('destinationSelector').classList.add('hidden');
+            
+            if (destination === 'bali') {
+                document.getElementById('baliContent').classList.remove('hidden');
+                loadFlightInfo('bali');
+                updateProgress('bali');
+                displayCustomMembers('bali');
+                displayComments('bali');
+                loadItemNotes('bali');
+            } else {
+                document.getElementById('hokkaidoContent').classList.remove('hidden');
+                loadFlightInfo('hokkaido');
+                updateProgress('hokkaido');
+                loadTrackingNumber();
+                displayCustomNotes('hokkaido');
+                displayComments('hokkaido');
+                loadItemNotes('hokkaido');
+            }
+            
+            localStorage.setItem('lastDestination', destination);
+        }
+
+        function backToSelector() {
+            document.getElementById('destinationSelector').classList.remove('hidden');
+            document.getElementById('baliContent').classList.add('hidden');
+            document.getElementById('hokkaidoContent').classList.add('hidden');
+            currentDestination = null;
+        }
+
+        function switchTab(destination, tabName) {
+            const tabs = document.querySelectorAll(`#${destination}Content .tab`);
+            const contents = document.querySelectorAll(`#${destination}Content .tab-content`);
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${destination}-${tabName}`).classList.add('active');
+            
+            localStorage.setItem(`${destination}ActiveTab`, tabName);
+        }
+
+        function updateProgress(destination) {
+            const checkboxes = document.querySelectorAll(`#${destination}-checklist input[type="checkbox"]`);
+            const checked = document.querySelectorAll(`#${destination}-checklist input[type="checkbox"]:checked`);
+            const percentage = Math.round((checked.length / checkboxes.length) * 100);
+            
+            const progressBar = document.getElementById(`${destination}-progressBar`);
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '%';
+            
+            checkboxes.forEach(checkbox => {
+                const parent = checkbox.parentElement;
+                if (checkbox.checked) {
+                    parent.classList.add('checked');
+                } else {
+                    parent.classList.remove('checked');
+                }
+            });
+            
+            saveChecklistState(destination);
+        }
+
+        function saveChecklistState(destination) {
+            const checkboxes = document.querySelectorAll(`#${destination}-checklist input[type="checkbox"]`);
+            const state = [];
+            checkboxes.forEach((checkbox, index) => {
+                state.push(checkbox.checked);
+            });
+            localStorage.setItem(`${destination}ChecklistState`, JSON.stringify(state));
+        }
+
+        function saveFlightInfo(destination) {
+            const flightOutbound = document.getElementById(`${destination}-flight-outbound`).value;
+            const boardingOutbound = document.getElementById(`${destination}-boarding-outbound`).value;
+            const flightReturn = document.getElementById(`${destination}-flight-return`).value;
+            const boardingReturn = document.getElementById(`${destination}-boarding-return`).value;
+            
+            localStorage.setItem(`${destination}FlightOutbound`, flightOutbound);
+            localStorage.setItem(`${destination}BoardingOutbound`, boardingOutbound);
+            localStorage.setItem(`${destination}FlightReturn`, flightReturn);
+            localStorage.setItem(`${destination}BoardingReturn`, boardingReturn);
+        }
+
+        function loadFlightInfo(destination) {
+            const flightOutbound = localStorage.getItem(`${destination}FlightOutbound`);
+            const boardingOutbound = localStorage.getItem(`${destination}BoardingOutbound`);
+            const flightReturn = localStorage.getItem(`${destination}FlightReturn`);
+            const boardingReturn = localStorage.getItem(`${destination}BoardingReturn`);
+            
+            if (flightOutbound) document.getElementById(`${destination}-flight-outbound`).value = flightOutbound;
+            if (boardingOutbound) document.getElementById(`${destination}-boarding-outbound`).value = boardingOutbound;
+            if (flightReturn) document.getElementById(`${destination}-flight-return`).value = flightReturn;
+            if (boardingReturn) document.getElementById(`${destination}-boarding-return`).value = boardingReturn;
+        }
+
+        function loadChecklistState(destination) {
+            const savedState = localStorage.getItem(`${destination}ChecklistState`);
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                const checkboxes = document.querySelectorAll(`#${destination}-checklist input[type="checkbox"]`);
+                checkboxes.forEach((checkbox, index) => {
+                    if (state[index]) {
+                        checkbox.checked = true;
+                    }
+                });
+                updateProgress(destination);
+            }
+        }
+
+        function loadActiveTab(destination) {
+            const savedTab = localStorage.getItem(`${destination}ActiveTab`);
+            if (savedTab) {
+                const tabs = document.querySelectorAll(`#${destination}Content .tab`);
+                const contents = document.querySelectorAll(`#${destination}Content .tab-content`);
+                
+                tabs.forEach(tab => tab.classList.remove('active'));
+                contents.forEach(content => content.classList.remove('active'));
+                
+                const targetTabText = savedTab === 'ticket' ? (destination === 'bali' ? 'チケット情報' : 'フライト情報') :
+                                     savedTab === 'checklist' ? 'チェックリスト' : '参考情報';
+                
+                const targetTab = Array.from(tabs).find(tab => tab.textContent.includes(targetTabText));
+                
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                    document.getElementById(`${destination}-${savedTab}`).classList.add('active');
+                }
+            }
+        }
+
+        window.addEventListener('load', () => {
+            const lastDestination = localStorage.getItem('lastDestination');
+            
+            if (lastDestination) {
+                selectDestination(lastDestination);
+            }
+            
+            // フライト情報の入力欄にイベントリスナーを追加
+            ['bali', 'hokkaido'].forEach(dest => {
+                const outboundInput = document.getElementById(`${dest}-flight-outbound`);
+                const boardingOutboundInput = document.getElementById(`${dest}-boarding-outbound`);
+                const returnInput = document.getElementById(`${dest}-flight-return`);
+                const boardingReturnInput = document.getElementById(`${dest}-boarding-return`);
+                
+                if (outboundInput) outboundInput.addEventListener('input', () => saveFlightInfo(dest));
+                if (boardingOutboundInput) boardingOutboundInput.addEventListener('input', () => saveFlightInfo(dest));
+                if (returnInput) returnInput.addEventListener('input', () => saveFlightInfo(dest));
+                if (boardingReturnInput) boardingReturnInput.addEventListener('input', () => saveFlightInfo(dest));
+                
+                loadChecklistState(dest);
+                loadActiveTab(dest);
+            });
+            
+            // 追跡番号の入力欄にイベントリスナーを追加
+            const trackingInput1 = document.getElementById('yamato-tracking-1');
+            const trackingInput2 = document.getElementById('yamato-tracking-2');
+            if (trackingInput1) {
+                trackingInput1.addEventListener('input', updateTrackingLink);
+            }
+            if (trackingInput2) {
+                trackingInput2.addEventListener('input', updateTrackingLink);
+            }
+        });
+
+        // Add note support to all checklist items dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            ['bali', 'hokkaido'].forEach(dest => {
+                const items = document.querySelectorAll(`#${dest}-checklist .checklist-item`);
+                items.forEach((item, index) => {
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    const itemText = item.querySelector('.item-text') || item.querySelector('span');
+                    
+                    if (!checkbox.hasAttribute('data-index')) {
+                        checkbox.setAttribute('data-index', index);
+                        
+                        if (itemText && itemText.tagName === 'SPAN') {
+                            const wrapper = document.createElement('div');
+                            wrapper.style.flex = '1';
+                            
+                            const textDiv = document.createElement('div');
+                            textDiv.className = 'item-text';
+                            textDiv.textContent = itemText.textContent;
+                            
+                            const noteDiv = document.createElement('div');
+                            noteDiv.className = 'item-note';
+                            noteDiv.setAttribute('data-note-index', index);
+                            noteDiv.style.display = 'none';
+                            
+                            wrapper.appendChild(textDiv);
+                            wrapper.appendChild(noteDiv);
+                            
+                            itemText.replaceWith(wrapper);
+                            
+                            const noteBtn = document.createElement('button');
+                            noteBtn.className = 'add-note-btn';
+                            noteBtn.textContent = '📝';
+                            noteBtn.onclick = function() { toggleNoteInput(dest, index, this); };
+                            item.appendChild(noteBtn);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
