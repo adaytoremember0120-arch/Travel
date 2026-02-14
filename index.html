@@ -199,9 +199,12 @@
         }
 
         .info-item strong {
-            display: inline-block;
-            width: 120px;
+            display: block;
+            width: auto;
             color: #2d3748;
+            font-size: 12px;
+            margin-bottom: 4px;
+            opacity: 0.8;
         }
 
         .info-link {
@@ -439,7 +442,7 @@
             padding: 8px 12px;
             font-size: 14px;
             width: 100%;
-            max-width: 300px;
+            box-sizing: border-box;
             font-family: inherit;
             transition: all 0.3s;
         }
@@ -452,6 +455,17 @@
 
         .editable-input::placeholder {
             color: #a0aec0;
+        }
+
+        .sets-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px;
+            padding: 3px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-left: 8px;
         }
 
         .flight-section {
@@ -510,42 +524,79 @@
                         <div class="flight-section">
                             <div class="flight-section-title">往路(行き)</div>
                             <div class="info-item">
-                                <strong>便名:</strong> <input type="text" id="bali-flight-outbound" class="editable-input" placeholder="便名を入力">
+                                <strong>出発日</strong>
+                                <input type="date" id="bali-date-outbound" class="editable-input" onchange="calcSets('bali')">
                             </div>
                             <div class="info-item">
-                                <strong>ボーディング:</strong> <input type="text" id="bali-boarding-outbound" class="editable-input" placeholder="例: 17:10">
+                                <strong>便名</strong>
+                                <input type="text" id="bali-flight-outbound" class="editable-input" placeholder="例: JL726">
+                            </div>
+                            <div class="info-item">
+                                <strong>ボーディング時刻</strong>
+                                <input type="text" id="bali-boarding-outbound" class="editable-input" placeholder="例: 17:10">
                             </div>
                         </div>
 
                         <div class="flight-section">
                             <div class="flight-section-title">復路(帰り)</div>
                             <div class="info-item">
-                                <strong>便名:</strong> <input type="text" id="bali-flight-return" class="editable-input" placeholder="便名を入力">
+                                <strong>帰着日</strong>
+                                <input type="date" id="bali-date-return" class="editable-input" onchange="calcSets('bali')">
                             </div>
                             <div class="info-item">
-                                <strong>ボーディング:</strong> <input type="text" id="bali-boarding-return" class="editable-input" placeholder="例: 14:30">
+                                <strong>便名</strong>
+                                <input type="text" id="bali-flight-return" class="editable-input" placeholder="例: JL725">
                             </div>
                             <div class="info-item">
-                                <strong>出発時刻:</strong> ボーディング1時間半前にくみさんの家を出発
+                                <strong>ボーディング時刻</strong>
+                                <input type="text" id="bali-boarding-return" class="editable-input" placeholder="例: 14:30">
+                            </div>
+                            <div class="info-item">
+                                <strong>出発目安</strong> ボーディング1時間半前にくみさんの家を出発
                             </div>
                         </div>
 
                         <div class="info-item">
-                            <strong>到着目安:</strong> ボーディングの1時間前
+                            <strong>到着目安</strong> ボーディングの1時間前
                         </div>
                     </div>
 
                     <div class="ticket-info">
                         <h3>🏨 宿泊情報</h3>
                         <div class="info-item">
-                            <strong>ホテル名:</strong> KUPUKUPU39
+                            <strong>ホテル名</strong> KUPUKUPU39
                         </div>
                         <div class="info-item">
-                            <strong>住所:</strong> Jl wana segara gg handayani NO11 kuta bali 80361<br>
-                            KAB. BADUNG
+                            <strong>住所</strong> Jl wana segara gg handayani NO11 kuta bali 80361, KAB. BADUNG
                         </div>
                         <div class="info-item">
-                            <strong>料金:</strong> 2,500円/泊
+                            <strong>料金</strong> 2,500円/泊
+                        </div>
+                    </div>
+
+                    <div class="ticket-info" id="bali-cost-section" style="display:none;">
+                        <h3>💰 費用シミュレーション</h3>
+                        <div style="background: rgba(255,255,255,0.6); border-radius: 10px; padding: 15px; margin-top: 10px;">
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                <span style="color: #4a5568;">📅 滞在日数</span>
+                                <span id="bali-cost-days" style="font-weight: 700; color: #2d3748;"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                <span style="color: #4a5568;">🏨 宿泊費 <small>(2,500円 × <span id="bali-nights-count"></span>泊)</small></span>
+                                <span id="bali-cost-hotel" style="font-weight: 700; color: #2d3748;"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                <span style="color: #4a5568;">🏄 ガイド代 <small>(6,500円 × <span id="bali-guide-days-count"></span>日)</small></span>
+                                <span id="bali-cost-guide" style="font-weight: 700; color: #2d3748;"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e9ecef;">
+                                <span style="color: #4a5568;">⛵ 船代 <small>(3,000円 × <span id="bali-boat-days-count"></span>日)</small></span>
+                                <span id="bali-cost-boat" style="font-weight: 700; color: #2d3748;"></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 12px 0 4px; margin-top: 4px;">
+                                <span style="font-size: 16px; font-weight: 700; color: #2d3748;">💴 合計</span>
+                                <span id="bali-cost-total" style="font-size: 18px; font-weight: 800; color: #e53e3e;"></span>
+                            </div>
                         </div>
                     </div>
 
@@ -588,6 +639,10 @@
                             </div>
                             <button class="add-note-btn" onclick="toggleNoteInput('bali', 1, this)">📝</button>
                         </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">eSIM</span>
+                        </div>
                     </div>
 
                     <div class="category">
@@ -617,6 +672,7 @@
                         <div class="category-title">
                             <span class="category-icon">👕</span>
                             衣類
+                            <span class="sets-badge" id="bali-sets-badge" style="display:none;"></span>
                         </div>
                         <div class="checklist-item">
                             <input type="checkbox" onchange="updateProgress('bali')">
@@ -734,6 +790,10 @@
                         <div class="category-title">
                             <span class="category-icon">✈️</span>
                             機内持ち込み
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('bali')">
+                            <span class="item-text">枕</span>
                         </div>
                         <div class="checklist-item">
                             <input type="checkbox" onchange="updateProgress('bali')">
@@ -943,20 +1003,32 @@
                         <div class="flight-section">
                             <div class="flight-section-title">往路(行き)</div>
                             <div class="info-item">
-                                <strong>便名:</strong> <input type="text" id="hokkaido-flight-outbound" class="editable-input" placeholder="便名を入力">
+                                <strong>出発日</strong>
+                                <input type="date" id="hokkaido-date-outbound" class="editable-input" onchange="calcSets('hokkaido')">
                             </div>
                             <div class="info-item">
-                                <strong>ボーディング:</strong> <input type="text" id="hokkaido-boarding-outbound" class="editable-input" placeholder="例: 09:00">
+                                <strong>便名</strong>
+                                <input type="text" id="hokkaido-flight-outbound" class="editable-input" placeholder="例: NH713">
+                            </div>
+                            <div class="info-item">
+                                <strong>ボーディング時刻</strong>
+                                <input type="text" id="hokkaido-boarding-outbound" class="editable-input" placeholder="例: 09:00">
                             </div>
                         </div>
 
                         <div class="flight-section">
                             <div class="flight-section-title">復路(帰り)</div>
                             <div class="info-item">
-                                <strong>便名:</strong> <input type="text" id="hokkaido-flight-return" class="editable-input" placeholder="便名を入力">
+                                <strong>帰着日</strong>
+                                <input type="date" id="hokkaido-date-return" class="editable-input" onchange="calcSets('hokkaido')">
                             </div>
                             <div class="info-item">
-                                <strong>ボーディング:</strong> <input type="text" id="hokkaido-boarding-return" class="editable-input" placeholder="例: 15:30">
+                                <strong>便名</strong>
+                                <input type="text" id="hokkaido-flight-return" class="editable-input" placeholder="例: NH714">
+                            </div>
+                            <div class="info-item">
+                                <strong>ボーディング時刻</strong>
+                                <input type="text" id="hokkaido-boarding-return" class="editable-input" placeholder="例: 15:30">
                             </div>
                         </div>
                     </div>
@@ -1052,6 +1124,25 @@
 
                     <div class="category">
                         <div class="category-title">
+                            <span class="category-icon">📋</span>
+                            予約・手続き
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">eSIM</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">東日本レンタカー予約確認</span>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">クロネコヤマト荷物発送</span>
+                        </div>
+                    </div>
+
+                    <div class="category">
+                        <div class="category-title">
                             <span class="category-icon">🏂</span>
                             スノボ用品
                         </div>
@@ -1096,6 +1187,7 @@
                         <div class="category-title">
                             <span class="category-icon">👕</span>
                             衣類
+                            <span class="sets-badge" id="hokkaido-sets-badge" style="display:none;"></span>
                         </div>
                         <div class="checklist-item">
                             <input type="checkbox" onchange="updateProgress('hokkaido')">
@@ -1173,6 +1265,10 @@
                         <div class="category-title">
                             <span class="category-icon">✈️</span>
                             機内持ち込み
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" onchange="updateProgress('hokkaido')">
+                            <span class="item-text">枕</span>
                         </div>
                         <div class="checklist-item">
                             <input type="checkbox" onchange="updateProgress('hokkaido')">
@@ -1556,13 +1652,11 @@
 
         function clearBaliTicketInfo() {
             if (confirm('フライト情報をクリアしますか?')) {
-                ['bali-flight-outbound', 'bali-boarding-outbound', 'bali-flight-return', 'bali-boarding-return'].forEach(id => {
+                ['bali-flight-outbound', 'bali-boarding-outbound', 'bali-flight-return', 'bali-boarding-return', 'bali-date-outbound', 'bali-date-return'].forEach(id => {
                     document.getElementById(id).value = '';
                 });
-                localStorage.removeItem('baliFlightOutbound');
-                localStorage.removeItem('baliBoardingOutbound');
-                localStorage.removeItem('baliFlightReturn');
-                localStorage.removeItem('baliBoardingReturn');
+                ['baliFlightOutbound','baliBoardingOutbound','baliFlightReturn','baliBoardingReturn','baliDateOutbound','baliDateReturn'].forEach(k => localStorage.removeItem(k));
+                document.getElementById('bali-sets-badge').style.display = 'none';
             }
         }
 
@@ -1590,13 +1684,11 @@
 
         function clearHokkaidoTicketInfo() {
             if (confirm('フライト・住所情報をクリアしますか?')) {
-                ['hokkaido-flight-outbound', 'hokkaido-boarding-outbound', 'hokkaido-flight-return', 'hokkaido-boarding-return'].forEach(id => {
+                ['hokkaido-flight-outbound', 'hokkaido-boarding-outbound', 'hokkaido-flight-return', 'hokkaido-boarding-return', 'hokkaido-date-outbound', 'hokkaido-date-return'].forEach(id => {
                     document.getElementById(id).value = '';
                 });
-                localStorage.removeItem('hokkaidoFlightOutbound');
-                localStorage.removeItem('hokkaidoBoardingOutbound');
-                localStorage.removeItem('hokkaidoFlightReturn');
-                localStorage.removeItem('hokkaidoBoardingReturn');
+                ['hokkaidoFlightOutbound','hokkaidoBoardingOutbound','hokkaidoFlightReturn','hokkaidoBoardingReturn','hokkaidoDateOutbound','hokkaidoDateReturn'].forEach(k => localStorage.removeItem(k));
+                document.getElementById('hokkaido-sets-badge').style.display = 'none';
             }
         }
 
@@ -1719,16 +1811,68 @@
             localStorage.setItem(`${destination}BoardingReturn`, boardingReturn);
         }
 
+        function calcSets(destination) {
+            const outbound = document.getElementById(`${destination}-date-outbound`).value;
+            const ret = document.getElementById(`${destination}-date-return`).value;
+            const badge = document.getElementById(`${destination}-sets-badge`);
+
+            if (outbound && ret) {
+                const d1 = new Date(outbound);
+                const d2 = new Date(ret);
+                const totalDays = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+                if (totalDays > 0) {
+                    const sets = totalDays;
+                    badge.textContent = `${sets}セット必要`;
+                    badge.style.display = 'inline-block';
+                    localStorage.setItem(`${destination}DateOutbound`, outbound);
+                    localStorage.setItem(`${destination}DateReturn`, ret);
+
+                    // バリのみ費用計算
+                    if (destination === 'bali') {
+                        const nights = totalDays;          // 宿泊数 = 出発〜帰着前日
+                        const guideDays = totalDays - 1;   // ガイド = 到着日を除く
+                        const boatDays = guideDays;
+
+                        const hotelCost  = nights    * 2500;
+                        const guideCost  = guideDays * 6500;
+                        const boatCost   = boatDays  * 3000;
+                        const total      = hotelCost + guideCost + boatCost;
+
+                        document.getElementById('bali-cost-section').style.display = 'block';
+                        document.getElementById('bali-cost-days').textContent      = `${totalDays}日間`;
+                        document.getElementById('bali-nights-count').textContent   = nights;
+                        document.getElementById('bali-cost-hotel').textContent     = `${hotelCost.toLocaleString()}円`;
+                        document.getElementById('bali-guide-days-count').textContent = guideDays;
+                        document.getElementById('bali-cost-guide').textContent     = `${guideCost.toLocaleString()}円`;
+                        document.getElementById('bali-boat-days-count').textContent = boatDays;
+                        document.getElementById('bali-cost-boat').textContent      = `${boatCost.toLocaleString()}円`;
+                        document.getElementById('bali-cost-total').textContent     = `${total.toLocaleString()}円`;
+                    }
+                } else {
+                    badge.style.display = 'none';
+                    if (destination === 'bali') document.getElementById('bali-cost-section').style.display = 'none';
+                }
+            } else {
+                badge.style.display = 'none';
+                if (destination === 'bali') document.getElementById('bali-cost-section').style.display = 'none';
+            }
+        }
+
         function loadFlightInfo(destination) {
             const flightOutbound = localStorage.getItem(`${destination}FlightOutbound`);
             const boardingOutbound = localStorage.getItem(`${destination}BoardingOutbound`);
             const flightReturn = localStorage.getItem(`${destination}FlightReturn`);
             const boardingReturn = localStorage.getItem(`${destination}BoardingReturn`);
-            
+            const dateOutbound = localStorage.getItem(`${destination}DateOutbound`);
+            const dateReturn = localStorage.getItem(`${destination}DateReturn`);
+
             if (flightOutbound) document.getElementById(`${destination}-flight-outbound`).value = flightOutbound;
             if (boardingOutbound) document.getElementById(`${destination}-boarding-outbound`).value = boardingOutbound;
             if (flightReturn) document.getElementById(`${destination}-flight-return`).value = flightReturn;
             if (boardingReturn) document.getElementById(`${destination}-boarding-return`).value = boardingReturn;
+            if (dateOutbound) document.getElementById(`${destination}-date-outbound`).value = dateOutbound;
+            if (dateReturn) document.getElementById(`${destination}-date-return`).value = dateReturn;
+            if (dateOutbound && dateReturn) calcSets(destination);
         }
 
         function loadChecklistState(destination) {
